@@ -28,11 +28,13 @@ if ($magic =~ m/RIFF[\x00-\xff]{4}WAVE/) {
 
     while (read($in, my $chknmsz, 8)) { # handle each chunk
         print $out $chknmsz;
-        my $chksz_u = unpack("%L", substr($chknmsz, 4, 4));
+        my $chksz_u = unpack("L", substr($chknmsz, 4, 4));
+        my $chknm = substr($chknmsz, 0, 4);
+        print("$chknm: $chksz_u\n");
         read($in, my $chkdt, $chksz_u);
 
         if (substr($chknmsz, 0, 4) eq "data") {
-            $chkdt = shuffle $chkdt;
+            $chkdt = join('', shuffle(split(//, $chkdt)));
         }
 
         print $out $chkdt;
