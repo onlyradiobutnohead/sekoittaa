@@ -34,7 +34,13 @@ if ($magic =~ m/RIFF[\x00-\xff]{4}WAVE/) {
         read($in, my $chkdt, $chksz_u);
 
         if (substr($chknmsz, 0, 4) eq "data") {
-            $chkdt = join('', shuffle(split(//, $chkdt)));
+            my $read = 0;
+            while ($read <= $chksz_u) {
+                my $off = int(rand($chksz_u - $read));
+                my $len = int(rand($chksz_u - $off));
+                substr($chkdt, $off+$read, $len) = join('', shuffle(split(//, substr($chkdt, $off+$read, $len))));
+                $read += $off + $len;
+            }
         }
 
         print $out $chkdt;
